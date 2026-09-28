@@ -72,6 +72,239 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
 
 /* Pertemuan 4 */
 .photo-upload{border:2px dashed #90CAF9;background:#F7FBFF;border-radius:14px;padding:14px;text-align:center}.photo-upload input{display:none}.photo-upload label{display:block;cursor:pointer;color:var(--navy);font-weight:800}.photo-preview{width:100%;max-height:230px;object-fit:cover;border-radius:12px;margin-top:10px;display:none}.rating-row{display:flex;gap:7px;justify-content:space-between;margin:10px 0}.rating-row label{flex:1;margin:0}.rating-row input{display:none}.rating-chip{display:flex;align-items:center;justify-content:center;height:42px;border:2px solid #d9e5dc;border-radius:12px;background:#fff;font-weight:900;color:var(--navy);cursor:pointer}.rating-row input:checked+.rating-chip{background:#E8F5E9;border-color:var(--primary);color:var(--primary-dark)}.science-flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0}.science-flow .step{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;min-width:86px;font-size:12px;font-weight:800}.science-flow .arrow{font-size:22px;color:var(--accent-orange)}.tote-preview{border:2px solid #D7CCC8;background:#FFFDF7;border-radius:18px;padding:18px;text-align:center;min-height:150px;display:flex;align-items:center;justify-content:center;flex-direction:column}.tote-preview .bag{font-size:72px;line-height:1}.rubric-sample{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}.rubric-box{border:1px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;font-size:11px;background:#fff}.rubric-box .leaf{font-size:26px;display:block;margin-bottom:3px}.meeting4-badge{background:#E8F5E9;color:var(--primary-dark);border-radius:20px;padding:6px 10px;font-size:11px;font-weight:800;display:inline-block;margin-bottom:8px}.safety-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--border);border-radius:11px;background:#fff;margin-bottom:8px}.safety-item input{width:18px;height:18px;accent-color:var(--primary);margin-top:2px}
+
+
+/* ===== REVISI VISUAL & INTERAKSI 2026-09-29 ===== */
+/* Partikel dibuat lebih mengilap dan mudah dibedakan */
+.particle{
+  background:radial-gradient(circle at 32% 28%,#d9f2ff 0 12%,#6ec1ff 24%,#2196f3 58%,#0d47a1 100%);
+  border:1px solid rgba(13,71,161,.72);
+  box-shadow:inset -3px -4px 5px rgba(8,52,116,.26),inset 3px 3px 4px rgba(255,255,255,.74),0 2px 4px rgba(13,71,161,.24);
+  transition:none;
+}
+.particle.gas-free{animation:none!important;will-change:left,top}
+
+/* Model partikel pada Screen 13 */
+.model-match-card{padding:12px;margin-bottom:10px}
+.model-match-layout{display:grid;grid-template-columns:128px 1fr;gap:12px;align-items:center}
+.model-preview-panel{position:relative;background:linear-gradient(145deg,#eef9ff,#d9f1ff);border:2px solid #9ed7f7;border-radius:18px;min-height:122px;padding:8px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 18px rgba(33,150,243,.10)}
+.model-letter{position:absolute;left:8px;top:6px;width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:#0D47A1;font-size:13px;font-weight:900;box-shadow:0 2px 6px rgba(13,71,161,.15);z-index:3}
+.model-diagram{position:relative;width:112px;height:100px}
+.model-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 31% 27%,#dff5ff 0 14%,#72c6ff 28%,#218cf0 58%,#0d47a1 100%);border:1px solid rgba(13,71,161,.55);box-shadow:inset -3px -3px 4px rgba(4,45,112,.25),inset 3px 3px 4px rgba(255,255,255,.72),0 2px 3px rgba(13,71,161,.22)}
+.model-diagram.gas-model .model-dot{animation:modelGasFloat 2.4s ease-in-out infinite alternate;animation-delay:var(--delay,0s)}
+@keyframes modelGasFloat{from{transform:translate(0,0)}to{transform:translate(var(--gx,4px),var(--gy,-5px))}}
+.model-answer select{margin-bottom:7px;font-weight:800;color:var(--navy)}
+.model-answer p{margin:0;color:var(--text);line-height:1.35}
+@media(max-width:360px){.model-match-layout{grid-template-columns:110px 1fr;gap:8px}.model-preview-panel{min-height:112px}.model-diagram{transform:scale(.9)}}
+
+/* Screen 23: soal berbasis satu gambar penuh */
+#screen-23.active{display:flex;flex-direction:column;height:100%;min-height:100%;padding:10px 14px 14px}
+.full-question-frame{flex:1;min-height:0;position:relative;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#eef9ff,#fff);border:2px dashed #90CAF9;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.full-question-frame img{width:100%;height:100%;display:block;object-fit:contain;background:#fff}
+.full-question-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--navy);background:linear-gradient(145deg,#eef9ff,#fff);font-weight:800;line-height:1.5}
+.full-question-placeholder .placeholder-icon{font-size:54px;margin-bottom:10px}
+#screen-23 .btn{flex:0 0 auto;margin-top:10px}
+
+/* Screen 61: tabel jadwal proyek seperti referensi */
+.schedule-card{padding:0!important;overflow:hidden;border:1px solid #8edcf8;background:#fff}
+.project-schedule{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px;color:#17365D}
+.project-schedule th{background:linear-gradient(180deg,#16b984,#079a70);color:#fff;border:1px solid rgba(255,255,255,.55);padding:8px 4px;text-align:center;font-size:11px;line-height:1.15;font-weight:900}
+.project-schedule td{border:1px solid #9edff5;padding:6px 5px;vertical-align:middle;background:#fafdff;line-height:1.2}
+.project-schedule tbody tr:nth-child(even):not(.production-row) td{background:#f4fbff}
+.project-schedule th:nth-child(1),.project-schedule td:nth-child(1){width:34px;text-align:center;font-size:15px;font-weight:900;color:#0D47A1}
+.project-schedule th:nth-child(2),.project-schedule td:nth-child(2){width:37%}
+.project-schedule th:nth-child(3),.project-schedule td:nth-child(3){width:28%}
+.project-schedule th:nth-child(4),.project-schedule td:nth-child(4){width:auto}
+.project-schedule td:nth-child(2){font-weight:800;color:#17365D}
+.project-schedule input[type="date"],.project-schedule input[type="text"]{width:100%;min-width:0;border:1px solid #b7ddea;border-radius:7px;background:#fff;padding:7px 4px;font-size:10px;color:#17365D;outline:none}
+.project-schedule input[type="date"]:focus,.project-schedule input[type="text"]:focus{border-color:#2196F3;box-shadow:0 0 0 2px rgba(33,150,243,.12)}
+.project-schedule .production-row td{background:#fff0ec;border-color:#ffc8bd}
+.project-schedule .production-row td:nth-child(2){color:#7c2131}
+.project-schedule .production-tag{display:inline-block;margin-top:3px;font-size:9px;font-weight:900;color:#e53935}
+@media(max-width:370px){.project-schedule{font-size:9.5px}.project-schedule th{font-size:9.5px;padding:7px 2px}.project-schedule td{padding:5px 3px}.project-schedule input[type="date"],.project-schedule input[type="text"]{font-size:9px;padding:6px 2px}.project-schedule th:nth-child(1),.project-schedule td:nth-child(1){width:28px}.project-schedule th:nth-child(2),.project-schedule td:nth-child(2){width:35%}.project-schedule th:nth-child(3),.project-schedule td:nth-child(3){width:29%}}
+
+/* =========================================================
+   INTERAKSI VISUAL — BREATHING + KILATAN ELEGAN
+   Dibuat lebih jelas agar tombol/kartu langsung terbaca clickable.
+   ========================================================= */
+:is(
+  .btn:not([disabled]),
+  .header-btn,
+  .nav-item,
+  .project-card:not(.locked),
+  .profile-card[onclick],
+  .menu-card[onclick],
+  .hotspot button,
+  .design-cell,
+  .role-card,
+  .check-item,
+  .option,
+  .rating-chip,
+  .safety-item,
+  .photo-upload label
+){
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  transform-origin:center center;
+  animation:clickableBreath 2.35s ease-in-out infinite !important;
+  will-change:transform,box-shadow,filter;
+}
+
+/* kilatan cahaya bergerak dari kiri ke kanan */
+:is(
+  .btn:not([disabled]),
+  .header-btn,
+  .nav-item,
+  .project-card:not(.locked),
+  .profile-card[onclick],
+  .menu-card[onclick],
+  .hotspot button,
+  .design-cell,
+  .role-card,
+  .check-item,
+  .option,
+  .rating-chip,
+  .safety-item,
+  .photo-upload label
+)::after{
+  content:"";
+  position:absolute;
+  z-index:20;
+  pointer-events:none;
+  top:-70%;
+  left:-65%;
+  width:38%;
+  height:240%;
+  opacity:0;
+  transform:rotate(18deg);
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.10) 18%,
+    rgba(255,255,255,.92) 48%,
+    rgba(200,230,201,.38) 62%,
+    transparent 100%
+  );
+  filter:blur(.2px);
+  animation:clickableShine 3.35s ease-in-out infinite !important;
+}
+
+@keyframes clickableBreath{
+  0%,100%{
+    transform:scale(1);
+    filter:brightness(1) saturate(1);
+    box-shadow:0 4px 14px rgba(0,0,0,.08);
+  }
+  50%{
+    transform:scale(1.028) translateY(-1px);
+    filter:brightness(1.07) saturate(1.04);
+    box-shadow:0 7px 21px rgba(46,125,50,.22),0 0 0 2px rgba(76,175,80,.08);
+  }
+}
+
+@keyframes clickableShine{
+  0%,55%{left:-65%;opacity:0}
+  61%{opacity:.18}
+  69%{opacity:.95}
+  82%{left:130%;opacity:.55}
+  88%,100%{left:145%;opacity:0}
+}
+
+/* ketika disentuh/diklik */
+:is(
+  .btn,
+  .header-btn,
+  .nav-item,
+  .project-card,
+  .profile-card[onclick],
+  .menu-card[onclick],
+  .hotspot button,
+  .design-cell,
+  .role-card,
+  .check-item,
+  .option,
+  .rating-chip,
+  .safety-item,
+  .photo-upload label
+):active{
+  animation-play-state:paused !important;
+  transform:scale(.965) !important;
+}
+
+/* yang terkunci/disabled tidak diberi petunjuk interaktif */
+.btn[disabled],
+.project-card.locked{
+  animation:none !important;
+  filter:none !important;
+  box-shadow:var(--shadow);
+}
+.btn[disabled]::after,
+.project-card.locked::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Hover desktop: sedikit lebih terangkat tanpa mengganggu breathing */
+@media (hover:hover){
+  :is(.btn:not([disabled]),.project-card:not(.locked),.profile-card[onclick],.menu-card[onclick],.hotspot button,.design-cell,.role-card,.check-item,.option,.rating-chip,.safety-item,.photo-upload label):hover{
+    filter:brightness(1.08) saturate(1.05);
+  }
+}
+
+/* ==========================
+   SCREEN 23 - GAMBAR SOAL
+   ========================== */
+
+.question-image-card{
+  width:100%;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:8px;
+  margin-bottom:14px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.question-image{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:390px;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+.question-image-placeholder{
+  min-height:240px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:8px;
+  background:#F4F9FC;
+  border:2px dashed #90CAF9;
+  border-radius:12px;
+  color:#0D47A1;
+}
+
+.question-image-card.image-loaded .question-image-placeholder{
+  display:none;
+}
+
+.question-instruction{
+  margin:10px 0 10px;
+  font-size:15px;
+  font-weight:800;
+  color:var(--text);
+}
+
+.question-options{
+  margin-bottom:4px;
+}
+
 </style>
 </head>
 <body>
@@ -208,7 +441,7 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
       Browser tidak mendukung video MP4.
     </video>
   </div>
-  <div class="video-note">🎥 Screen ini sengaja hanya menggunakan video, tanpa rangkaian gambar. Fokuskan perhatian pada proses dari awal hingga muncul motif pada totebag.</div>
+  <div class="video-note">🎥 Simak video di atas dengan saksama!. Fokuskan perhatian pada proses dari awal hingga muncul motif pada totebag.</div>
   <div class="form-group" style="margin-top:14px"><label>Apa yang paling membuatmu penasaran?</label>
     <select id="s3-curious"><option value="">Pilih...</option><option>Mengapa warna dapat berpindah?</option><option>Mengapa digunakan uap?</option><option>Mengapa hasil daun bisa berbeda?</option><option>Bagaimana zat berubah selama proses?</option><option>Lainnya</option></select>
   </div>
@@ -325,11 +558,26 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
 
 <section id="screen-13" class="screen lesson" data-lesson="13">
   <h1>🧩 Tantangan Model Partikel</h1>
-  <p>Pasangkan setiap model dengan wujud zat yang tepat.</p>
+  <p>Amati susunan partikel berikut, lalu pasangkan setiap model dengan wujud zat yang tepat.</p>
   <div class="stack" id="model-match">
-    <div class="card"><div class="row"><span style="font-size:36px">🔵🔵🔵</span><select data-answer="Padat"><option value="">Model A adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select></div><p class="small" style="margin:6px 0 0">Partikel sangat berdekatan dan hanya bergetar di sekitar posisi.</p></div>
-    <div class="card"><div class="row"><span style="font-size:36px">🔵 🔵🔵</span><select data-answer="Cair"><option value="">Model B adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select></div><p class="small" style="margin:6px 0 0">Partikel berdekatan tetapi dapat bergeser.</p></div>
-    <div class="card"><div class="row"><span style="font-size:36px">🔵　　🔵</span><select data-answer="Gas"><option value="">Model C adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select></div><p class="small" style="margin:6px 0 0">Partikel berjauhan dan bergerak bebas.</p></div>
+    <div class="card model-match-card">
+      <div class="model-match-layout">
+        <div class="model-preview-panel"><span class="model-letter">A</span><div id="model-a-preview" class="model-diagram"></div></div>
+        <div class="model-answer"><select data-answer="Padat"><option value="">Model A adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select><p class="small">Partikelnya tersusun sangat rapat dan teratur.</p></div>
+      </div>
+    </div>
+    <div class="card model-match-card">
+      <div class="model-match-layout">
+        <div class="model-preview-panel"><span class="model-letter">B</span><div id="model-b-preview" class="model-diagram"></div></div>
+        <div class="model-answer"><select data-answer="Cair"><option value="">Model B adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select><p class="small">Partikelnya tetap berdekatan, tetapi susunannya tidak teratur dan dapat bergeser.</p></div>
+      </div>
+    </div>
+    <div class="card model-match-card">
+      <div class="model-match-layout">
+        <div class="model-preview-panel"><span class="model-letter">C</span><div id="model-c-preview" class="model-diagram"></div></div>
+        <div class="model-answer"><select data-answer="Gas"><option value="">Model C adalah...</option><option>Padat</option><option>Cair</option><option>Gas</option></select><p class="small">Partikelnya berjauhan dan bergerak bebas ke segala arah.</p></div>
+      </div>
+    </div>
   </div>
   <div id="model-feedback" class="feedback"></div>
   <button class="btn btn-blue" onclick="checkModelMatch()">Periksa Jawaban</button>
@@ -443,16 +691,82 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
 </section>
 
 <section id="screen-23" class="screen lesson" data-lesson="23">
-  <h1>☁️ Ke Mana Air Pergi?</h1>
-  <div class="card card-blue"><p style="margin:0">Saat air menerima energi panas, sebagian air dapat berubah dari <b>cair menjadi gas</b>.</p></div>
-  <p><b>Perubahan wujud apakah itu?</b></p>
-  <label class="option"><input type="radio" name="s23" value="a">Membeku (cair → padat)</label>
-  <label class="option"><input type="radio" name="s23" value="b">Menguap (cair → gas)</label>
-  <label class="option"><input type="radio" name="s23" value="c">Mengembun (gas → cair)</label>
-  <label class="option"><input type="radio" name="s23" value="d">Mencair (padat → cair)</label>
+
+  <!-- GAMBAR SOAL: sudah berisi judul + pertanyaan -->
+  <div class="question-image-card">
+    <img
+      src="media/foto/screen23.png"
+      alt="Soal Screen 23"
+      class="question-image"
+      onload="this.parentElement.classList.add('image-loaded')"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+    >
+
+    <!-- Muncul jika gambar belum dimasukkan -->
+    <div class="question-image-placeholder">
+      <div style="font-size:42px">🖼️</div>
+      <strong>Gambar soal belum tersedia</strong>
+      <small>
+        Masukkan gambar ke:<br>
+        assets/foto/screen23.png
+      </small>
+    </div>
+  </div>
+
+
+  <!-- PETUNJUK -->
+  <div class="question-instruction">
+    Pilih jawaban yang paling tepat.
+  </div>
+
+
+  <!-- PILIHAN GANDA -->
+  <div class="question-options">
+
+    <label class="option">
+      <input type="radio" name="s23" value="a">
+      <span><b>A.</b> Membeku</span>
+    </label>
+
+    <label class="option">
+      <input type="radio" name="s23" value="b">
+      <span><b>B.</b> Menguap</span>
+    </label>
+
+    <label class="option">
+      <input type="radio" name="s23" value="c">
+      <span><b>C.</b> Mengembun</span>
+    </label>
+
+    <label class="option">
+      <input type="radio" name="s23" value="d">
+      <span><b>D.</b> Mencair</span>
+    </label>
+
+  </div>
+
+
+  <!-- FEEDBACK JAWABAN -->
   <div id="s23-feedback" class="feedback"></div>
-  <button class="btn btn-blue" onclick="checkS23()">Cek Jawaban</button>
-  <button class="btn" id="s23-next" disabled onclick="goLesson(24)">Lanjut →</button>
+
+
+  <!-- TOMBOL -->
+  <button
+    class="btn btn-blue"
+    onclick="checkS23()"
+  >
+    Cek Jawaban
+  </button>
+
+  <button
+    class="btn"
+    id="s23-next"
+    disabled
+    onclick="goLesson(24)"
+  >
+    Lanjut →
+  </button>
+
 </section>
 
 <section id="screen-24" class="screen lesson" data-lesson="24">
@@ -913,15 +1227,19 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
 
 <section id="screen-61" class="screen lesson" data-lesson="61">
   <h1>🗓️ Susun Jadwal Proyek</h1>
-  <p>Susun rencana waktu dari persiapan hingga hari produksi pada Pertemuan 4.</p>
-  <div class="card">
-    <table>
-      <thead><tr><th>Kegiatan</th><th>Waktu</th><th>Penanggung jawab</th></tr></thead>
+  <p>Tentukan tanggal pelaksanaan dan penanggung jawab untuk setiap kegiatan sebelum hari produksi.</p>
+  <div class="card schedule-card">
+    <table class="project-schedule">
+      <thead>
+        <tr><th>No</th><th>Kegiatan</th><th>Waktu<br>(Pertemuan/Tanggal)</th><th>Penanggung<br>Jawab</th></tr>
+      </thead>
       <tbody>
-        <tr><td>Pemilihan daun</td><td><input id="s61-time1" placeholder="Kapan?"></td><td><input id="s61-pic1" placeholder="Nama"></td></tr>
-        <tr><td>Finalisasi blueprint</td><td><input id="s61-time2" placeholder="Kapan?"></td><td><input id="s61-pic2" placeholder="Nama"></td></tr>
-        <tr><td>Persiapan bahan & alat</td><td><input id="s61-time3" placeholder="Kapan?"></td><td><input id="s61-pic3" placeholder="Nama"></td></tr>
-        <tr><td>Hari produksi (Pertemuan 4)</td><td><input id="s61-time4" placeholder="Waktu"></td><td><input id="s61-pic4" placeholder="Nama"></td></tr>
+        <tr><td>1</td><td>Pengumpulan ide dan pemilihan daun</td><td><input type="date" id="s61-time1" aria-label="Tanggal pengumpulan ide dan pemilihan daun"></td><td><input type="text" id="s61-pic1" placeholder="Nama" aria-label="Penanggung jawab kegiatan 1"></td></tr>
+        <tr><td>2</td><td>Pembuatan desain motif (blueprint)</td><td><input type="date" id="s61-time2" aria-label="Tanggal pembuatan desain motif"></td><td><input type="text" id="s61-pic2" placeholder="Nama" aria-label="Penanggung jawab kegiatan 2"></td></tr>
+        <tr><td>3</td><td>Persiapan bahan dan alat</td><td><input type="date" id="s61-time3" aria-label="Tanggal persiapan bahan dan alat"></td><td><input type="text" id="s61-pic3" placeholder="Nama" aria-label="Penanggung jawab kegiatan 3"></td></tr>
+        <tr><td>4</td><td>Pembagian tugas akhir</td><td><input type="date" id="s61-time4" aria-label="Tanggal pembagian tugas akhir"></td><td><input type="text" id="s61-pic4" placeholder="Nama" aria-label="Penanggung jawab kegiatan 4"></td></tr>
+        <tr><td>5</td><td>Pengecekan ulang desain dan bahan</td><td><input type="date" id="s61-time5" aria-label="Tanggal pengecekan ulang desain dan bahan"></td><td><input type="text" id="s61-pic5" placeholder="Nama" aria-label="Penanggung jawab kegiatan 5"></td></tr>
+        <tr class="production-row"><td>6</td><td>Hari produksi <b>(pertemuan 4)</b></td><td><input type="date" id="s61-time6" aria-label="Tanggal hari produksi"><span class="production-tag">Isi sesuai jadwal Pertemuan 4</span></td><td><input type="text" id="s61-pic6" placeholder="Nama" aria-label="Penanggung jawab kegiatan 6"></td></tr>
       </tbody>
     </table>
   </div>
@@ -1434,7 +1752,7 @@ async function syncCloud(){
   if(!navigator.onLine)return;
   try{await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'sync',token:GAS_TOKEN,studentId:getStudentId(),student:data.student,inputs:data.inputs,progress:data.progress,currentLesson})})}catch(e){console.warn(e)}
 }
-function allScreens(){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))}
+function allScreens(){stopAllGasSimulations();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))}
 function updateChrome(){
   const header=document.getElementById('main-header'),wrap=document.getElementById('progress-wrap'),nav=document.getElementById('bottom-nav');
   if(currentMode==='lesson'){
@@ -1526,12 +1844,73 @@ function checkClassify(){
   const sels=[...document.querySelectorAll('#classify-grid select')];if(sels.some(s=>!s.value))return toast('Isi semua klasifikasi.');const ok=sels.every(s=>s.value===s.dataset.answer);const fb=document.getElementById('classify-feedback');fb.className='feedback show '+(ok?'ok':'bad');fb.textContent=ok?'✅ Tepat. Kamu sudah dapat membedakan wujud zat dalam konteks ecoprint.':'💡 Masih ada yang belum tepat. Ingat sifat padat, cair, dan gas.';document.getElementById('classify-next').disabled=!ok;if(ok){data.scores.s7=1;saveData()}
 }
 function checkS8(){const c=document.querySelector('input[name="s8"]:checked');if(!c)return toast('Pilih jawaban terlebih dahulu.');const ok=c.value==='b';const fb=document.getElementById('s8-feedback');fb.className='feedback show '+(ok?'ok':'bad');fb.textContent=ok?'✅ Tepat. Sifat makroskopis zat cair dapat dijelaskan oleh susunan dan gerak partikelnya.':'💡 Belum tepat. Zat cair memiliki partikel yang berdekatan tetapi dapat bergeser.';document.getElementById('s8-next').disabled=!ok;if(ok){data.inputs.s8='b';saveData()}}
-function buildParticles(elId,type,count=20){const el=document.getElementById(elId);if(!el)return;el.innerHTML='';const W=320,H=145;for(let i=0;i<count;i++){const p=document.createElement('span');p.className='particle '+(type==='solid'?'vibrate':type==='gas'?'fast':'float');let x,y;if(type==='solid'){const cols=6;x=45+(i%cols)*34;y=25+Math.floor(i/cols)*30}else if(type==='liquid'){x=25+(i%7)*38+(Math.random()*8);y=55+Math.floor(i/7)*28+(Math.random()*10)}else{x=12+Math.random()*(W-40);y=10+Math.random()*(H-40)}p.style.left=x+'px';p.style.top=y+'px';el.appendChild(p)}}
+const gasSimulations=new Map();
+function stopGasSimulation(el){const sim=gasSimulations.get(el);if(sim&&sim.frame)cancelAnimationFrame(sim.frame);gasSimulations.delete(el)}
+function stopAllGasSimulations(){gasSimulations.forEach(sim=>{if(sim.frame)cancelAnimationFrame(sim.frame)});gasSimulations.clear()}
+function buildParticles(elId,type,count=20){
+  const el=document.getElementById(elId);if(!el)return;
+  stopGasSimulation(el);el.innerHTML='';
+  const W=Math.max(240,el.clientWidth||320),H=Math.max(120,el.clientHeight||145),size=18;
+  if(type==='gas'){startGasSimulation(el,count,W,H,size);return}
+  for(let i=0;i<count;i++){
+    const p=document.createElement('span');p.className='particle '+(type==='solid'?'vibrate':'float');
+    let x,y;
+    if(type==='solid'){const cols=6;x=Math.max(18,(W-6*34)/2)+(i%cols)*34;y=24+Math.floor(i/cols)*30}
+    else{x=20+(i%7)*Math.min(38,(W-45)/7)+(Math.random()*7);y=52+Math.floor(i/7)*28+(Math.random()*9)}
+    p.style.left=x+'px';p.style.top=y+'px';el.appendChild(p)
+  }
+}
+function startGasSimulation(el,count,W,H,size){
+  const padding=10,minStartDistance=38,minMoveDistance=30,items=[];
+  for(let i=0;i<count;i++){
+    const p=document.createElement('span');p.className='particle gas-free';
+    let x=padding,y=padding,placed=false;
+    for(let attempt=0;attempt<260&&!placed;attempt++){
+      x=padding+Math.random()*Math.max(1,W-size-padding*2);
+      y=padding+Math.random()*Math.max(1,H-size-padding*2);
+      placed=items.every(o=>Math.hypot((x+size/2)-(o.x+size/2),(y+size/2)-(o.y+size/2))>=minStartDistance);
+    }
+    const angle=Math.random()*Math.PI*2,speed=.55+Math.random()*.65;
+    const item={el:p,x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed};items.push(item);el.appendChild(p)
+  }
+  let last=performance.now();
+  const step=(now)=>{
+    const dt=Math.min(2.1,Math.max(.45,(now-last)/16.67));last=now;
+    const currentW=Math.max(240,el.clientWidth||W),currentH=Math.max(120,el.clientHeight||H);
+    items.forEach(o=>{
+      o.x+=o.vx*dt;o.y+=o.vy*dt;
+      if(o.x<=padding){o.x=padding;o.vx=Math.abs(o.vx)}
+      if(o.x>=currentW-size-padding){o.x=currentW-size-padding;o.vx=-Math.abs(o.vx)}
+      if(o.y<=padding){o.y=padding;o.vy=Math.abs(o.vy)}
+      if(o.y>=currentH-size-padding){o.y=currentH-size-padding;o.vy=-Math.abs(o.vy)}
+    });
+    for(let a=0;a<items.length;a++)for(let b=a+1;b<items.length;b++){
+      const A=items[a],B=items[b],dx=(B.x-A.x),dy=(B.y-A.y),dist=Math.hypot(dx,dy)||.01;
+      if(dist<minMoveDistance){
+        const nx=dx/dist,ny=dy/dist,overlap=(minMoveDistance-dist)/2;
+        A.x-=nx*overlap;A.y-=ny*overlap;B.x+=nx*overlap;B.y+=ny*overlap;
+        const rel=(A.vx-B.vx)*nx+(A.vy-B.vy)*ny;
+        if(rel>0){A.vx-=rel*nx;A.vy-=rel*ny;B.vx+=rel*nx;B.vy+=rel*ny}
+      }
+    }
+    items.forEach(o=>{o.el.style.left=o.x+'px';o.el.style.top=o.y+'px'});
+    const sim=gasSimulations.get(el);if(sim)sim.frame=requestAnimationFrame(step)
+  };
+  gasSimulations.set(el,{frame:requestAnimationFrame(step),items});
+}
+function renderParticleModel(id,type){
+  const el=document.getElementById(id);if(!el)return;el.innerHTML='';el.classList.toggle('gas-model',type==='gas');
+  const solid=[[18,17],[37,14],[56,16],[75,14],[27,34],[46,33],[65,35],[84,32],[18,51],[37,50],[56,52],[75,49],[27,68],[46,67],[65,69],[84,66],[37,84],[56,82],[75,83]];
+  const liquid=[[16,20],[36,16],[58,20],[78,15],[25,35],[49,37],[71,34],[91,39],[14,54],[37,56],[62,52],[84,58],[26,72],[50,74],[75,70],[94,75],[40,88],[64,86]];
+  const gas=[[12,18],[74,10],[94,43],[24,66],[61,78],[91,82]];
+  const coords=type==='solid'?solid:type==='liquid'?liquid:gas;
+  coords.forEach((xy,i)=>{const d=document.createElement('span');d.className='model-dot';d.style.left=xy[0]+'px';d.style.top=xy[1]+'px';if(type==='gas'){d.style.setProperty('--gx',((i%2?1:-1)*(3+i%3))+'px');d.style.setProperty('--gy',((i%3?1:-1)*(3+(i%2)))+'px');d.style.setProperty('--delay',(-i*.27)+'s')}el.appendChild(d)})
+}
 function updateMacroMicro(v){const micro=document.getElementById('micro-view'),macro=document.getElementById('macro-view'),label=document.getElementById('zoom-label');if(v>45){macro.style.display='none';micro.style.display='block';label.textContent='Mikroskopis';buildParticles('micro-view','liquid',18)}else{macro.style.display='block';micro.style.display='none';label.textContent='Makroskopis'}}
 function checkModelMatch(){const sels=[...document.querySelectorAll('#model-match select')];if(sels.some(s=>!s.value))return toast('Lengkapi semua model.');const ok=sels.every(s=>s.value===s.dataset.answer);const fb=document.getElementById('model-feedback');fb.className='feedback show '+(ok?'ok':'bad');fb.textContent=ok?'✅ Semua model sudah tepat.':'💡 Coba periksa kembali susunan, jarak, dan gerak partikelnya.';document.getElementById('model-next').disabled=!ok;if(ok){data.scores.s13=1;saveData()}}
 function updateTemp(v){const label=document.getElementById('temp-text');label.textContent=v<45?'Suhu rendah':v<75?'Suhu sedang':'Suhu lebih tinggi';const parts=document.querySelectorAll('#temp-particles .particle');parts.forEach(p=>{p.style.animationDuration=v<45?'2.8s':v<75?'1.8s':'.9s'})}
 function runDiffusion(){const t=document.getElementById('diffusion-tank');t.classList.remove('running');void t.offsetWidth;t.classList.add('running');document.getElementById('s15-next').disabled=false;data.inputs.s15Run=true;saveData()}
-function initVisuals(n){if(n===9)buildParticles('micro-view','liquid',18);if(n===10)buildParticles('solid-particles','solid',20);if(n===11)buildParticles('liquid-particles','liquid',19);if(n===12)buildParticles('gas-particles','gas',15);if(n===14){buildParticles('temp-particles','liquid',18);updateTemp(document.getElementById('temp-range').value)}if(n===24){buildParticles('heat-particles','liquid',20);updateHeatLab(document.getElementById('heat-range').value)}if(n===56)restorePattern();if(n===59)populateS59();if(n===64)buildBlueprint();if(n===65)updateFinalCheck();if(n===66)populateMeeting4Blueprint();if(n===70)populateMeeting4Pattern();if(n===76){buildParticles('m4-liquid-particles','liquid',18);buildParticles('m4-gas-particles','gas',14)}if(n===82)populateS82();if(n===87)populateS87();}
+function initVisuals(n){if(n===9)buildParticles('micro-view','liquid',18);if(n===10)buildParticles('solid-particles','solid',20);if(n===11)buildParticles('liquid-particles','liquid',19);if(n===12)buildParticles('gas-particles','gas',10);if(n===13){renderParticleModel('model-a-preview','solid');renderParticleModel('model-b-preview','liquid');renderParticleModel('model-c-preview','gas')}if(n===14){buildParticles('temp-particles','liquid',18);updateTemp(document.getElementById('temp-range').value)}if(n===24){buildParticles('heat-particles','liquid',20);updateHeatLab(document.getElementById('heat-range').value)}if(n===56)restorePattern();if(n===59)populateS59();if(n===64)buildBlueprint();if(n===65)updateFinalCheck();if(n===66)populateMeeting4Blueprint();if(n===70)populateMeeting4Pattern();if(n===76){buildParticles('m4-liquid-particles','liquid',18);buildParticles('m4-gas-particles','gas',12)}if(n===82)populateS82();if(n===87)populateS87();}
 
 function markAnswer(name,correct,feedbackId,nextId,messageOk,messageBad){
   const c=document.querySelector(`input[name="${name}"]:checked`);if(!c)return toast('Pilih jawaban terlebih dahulu.');
@@ -1594,7 +1973,9 @@ function checkScreen59(){
 }
 function saveRequiredMany(ids,next,msg){if(ids.some(id=>!String(document.getElementById(id).value).trim()))return toast(msg||'Lengkapi semua bagian.');ids.forEach(id=>data.inputs[id]=document.getElementById(id).value);saveData();goLesson(next)}
 function saveScreen61(){
-  const ids=['s61-time1','s61-pic1','s61-time2','s61-pic2','s61-time3','s61-pic3','s61-time4','s61-pic4','s61-note'];if(ids.some(id=>!String(document.getElementById(id).value).trim()))return toast('Lengkapi jadwal, penanggung jawab, dan alasannya.');ids.forEach(id=>data.inputs[id]=document.getElementById(id).value);saveData();goLesson(62)
+  const ids=['s61-time1','s61-pic1','s61-time2','s61-pic2','s61-time3','s61-pic3','s61-time4','s61-pic4','s61-time5','s61-pic5','s61-time6','s61-pic6','s61-note'];
+  if(ids.some(id=>!String(document.getElementById(id).value).trim()))return toast('Lengkapi semua tanggal, penanggung jawab, dan alasannya.');
+  ids.forEach(id=>data.inputs[id]=document.getElementById(id).value);saveData();goLesson(62)
 }
 function saveAndNextOptional(id,next){const el=document.getElementById(id);if(el)data.inputs[id]=el.value;saveData();goLesson(next)}
 function selectedLeafNames(){const map=[['s55-leaf1','Daun jati'],['s55-leaf2','Daun ketapang'],['s55-leaf3','Daun sirih'],['s55-leaf4','Daun jarak'],['s55-leaf5','Daun lain']];return map.filter(([id])=>!!data.inputs[id]).map(x=>x[1])}
@@ -1610,7 +1991,7 @@ function finalCheckState(){return [
   ['s65-i2',selectedLeafNames().length>=2&&!!data.inputs['s55-reason']],
   ['s65-i3',Array.isArray(data.inputs.s56Pattern)&&data.inputs.s56Pattern.filter(Boolean).length>=3&&!!data.inputs['s56-reason']],
   ['s65-i4',!!data.inputs['s58-answer']&&!!data.scores.s59],
-  ['s65-i5',['s60-r1','s60-r2','s60-r3','s60-r4','s60-r5','s60-r6','s61-time4','s61-pic4'].every(id=>!!data.inputs[id])],
+  ['s65-i5',['s60-r1','s60-r2','s60-r3','s60-r4','s60-r5','s60-r6','s61-time1','s61-pic1','s61-time2','s61-pic2','s61-time3','s61-pic3','s61-time4','s61-pic4','s61-time5','s61-pic5','s61-time6','s61-pic6'].every(id=>!!data.inputs[id])],
   ['s65-i6',['s62-k1','s62-k2','s62-k3','s62-k4','s62-k5','s63-s1','s63-s2','s63-s3','s63-s4','s63-s5'].every(id=>!!data.inputs[id])]
 ]}
 function updateFinalCheck(){const states=finalCheckState();states.forEach(([id,ok])=>{const el=document.getElementById(id);if(el)el.textContent=ok?'✅':'⏳'});const ok=states.every(x=>x[1]),fb=document.getElementById('s65-feedback');fb.className='feedback show '+(ok?'ok':'bad');fb.textContent=ok?'✅ Blueprint lengkap. Kelompokmu siap masuk ke Pertemuan 4.':'💡 Masih ada bagian rancangan yang belum lengkap. Gunakan tombol kembali untuk memperbaikinya.';return ok}
