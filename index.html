@@ -335,6 +335,7 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
 @media(max-width:350px){.screen{padding:14px}.sort-columns,#screen-92 .grid-2{grid-template-columns:1fr}.safety-item{grid-template-columns:20px 52px minmax(0,1fr)}.safety-visual{width:52px}.mood-options small{font-size:9px}}
 @media(prefers-reduced-motion:reduce){#app :is(.btn,.header-btn,.nav-item,.project-card,.profile-card,.menu-card,.hotspot button,.design-cell,.role-card,.check-item,.option,.rating-chip,.safety-item,.photo-upload label){animation:none!important}#app :is(.btn,.header-btn,.nav-item,.project-card,.profile-card,.menu-card,.hotspot button,.design-cell,.role-card,.check-item,.option,.rating-chip,.safety-item,.photo-upload label)::after{animation:none!important}}
 
+.peer-remove{border:1px solid #cfd8dc;background:#fff;border-radius:8px;padding:8px 12px;min-height:40px;font-size:12px;color:#b71c1c;cursor:pointer}.peer-review-card{margin-top:12px}.peer-review-card input,.peer-review-card textarea{min-width:0}
 </style>
 </head>
 <body>
@@ -1034,9 +1035,13 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
   <p>Gunakan peta bukti untuk menjelaskan temuan kelompokmu kepada teman-teman dan guru.</p>
   <div class="card card-yellow"><b>Yang perlu disampaikan:</b><div class="stack" style="margin-top:10px"><span>✅ Fenomena yang diamati</span><span>✅ Konsep IPA yang terkait</span><span>✅ Bukti dari mini-lab</span><span>✅ Kesimpulan kelompok</span></div></div>
   <div class="card"><b>⏱️ Durasi saran</b><p class="small" style="margin:5px 0 0">3–5 menit per kelompok.</p></div>
-  <div class="form-group"><label>Catatan setelah presentasi</label><textarea id="s44-note" placeholder="Masukan dari teman/guru atau hal yang ingin diperbaiki..."></textarea></div>
-<div class="card"><h2>Masukan untuk kelompok yang presentasi</h2><div class="form-group"><label for="s44-peer-group">Masukan untuk kelompok ...</label><input type="text" id="s44-peer-group" placeholder="Nama atau nomor kelompok"></div><div class="form-group"><label for="s44-peer-note">Isi masukanmu</label><textarea id="s44-peer-note" placeholder="Contoh: Kelompok 2 sudah menunjukkan bukti dengan jelas. Sebaiknya jelaskan asal tetesan pada tutup panci."></textarea></div></div>
-  <button class="btn" onclick="savePresentation44()">Selesai Presentasi →</button>
+  <div class="section-label">Komentar untuk kelompok lain</div>
+  <p>Dengarkan presentasi kelompok lain. Isi nama kelompok yang dikomentari dan masukanmu. Nama kelompok dapat diubah langsung pada kotaknya. Ketuk <b>Tambah Kelompok</b> untuk memberi komentar kepada kelompok lainnya.</p>
+  <div id="s44-peer-list" data-peer-reviews aria-label="Daftar komentar untuk kelompok lain"></div>
+  <input type="hidden" id="s44-peer-reviews">
+  <button type="button" class="btn btn-outline" id="s44-add-group" onclick="addPeerReview44()">＋ Tambah Kelompok</button>
+  <p id="s44-peer-status" class="small" role="status" style="margin-top:10px">Nama kelompok dan komentar tersimpan otomatis.</p>
+  <button class="btn" onclick="savePresentation44()">Simpan Komentar &amp; Lanjut →</button>
 </section>
 
 <section id="screen-45" class="screen lesson" data-lesson="45">
@@ -1825,8 +1830,61 @@ function checkSort(){
   document.getElementById('s34-next').disabled=!ok;if(ok){data.scores.s34=1;saveData()}
 }
 function resetSort(){data.inputs['s34-sort']='{}';delete data.scores.s34;sortSelected='';renderSort();document.getElementById('s34-feedback').className='feedback';document.getElementById('sort-status').textContent='Pengelompokan diulang. Pilih kartu untuk mulai.';saveData()}
+
+function readPeerReviews44(){
+  try{
+    const saved=JSON.parse(data.inputs['s44-peer-reviews']||'null');
+    if(Array.isArray(saved)&&saved.length)return saved.map(r=>({group:String(r.group||''),comment:String(r.comment||'')}));
+  }catch(e){}
+  return [{group:String(data.inputs['s44-peer-group']||''),comment:String(data.inputs['s44-peer-note']||'')}];
+}
+function storePeerReviews44(rows){
+  const value=JSON.stringify(rows);data.inputs['s44-peer-reviews']=value;
+  const hidden=document.getElementById('s44-peer-reviews');if(hidden)hidden.value=value;
+  saveData();
+}
+function persistPeerReviews44(){
+  const rows=[...document.querySelectorAll('#s44-peer-list .peer-review-card')].map(card=>({group:card.querySelector('[data-peer-field="group"]').value,comment:card.querySelector('[data-peer-field="comment"]').value}));
+  storePeerReviews44(rows);return rows;
+}
+function renderPeerReviews44(){
+  const list=document.getElementById('s44-peer-list'),rows=readPeerReviews44();list.replaceChildren();
+  rows.forEach((row,i)=>{
+    const card=document.createElement('div');card.className='card peer-review-card';
+    const top=document.createElement('div');top.className='between';top.style.marginBottom='12px';
+    const title=document.createElement('h2');title.textContent='Komentar '+(i+1);title.style.margin='0';top.appendChild(title);
+    if(rows.length>1){const remove=document.createElement('button');remove.type='button';remove.className='peer-remove';remove.textContent='Hapus';remove.setAttribute('aria-label','Hapus komentar '+(i+1));remove.addEventListener('click',()=>removePeerReview44(i));top.appendChild(remove)}
+    card.appendChild(top);
+    for(const field of ['group','comment']){
+      const block=document.createElement('div');block.className='form-group';
+      const label=document.createElement('label'),id='s44-peer-'+field+'-'+i;label.htmlFor=id;
+      label.textContent=field==='group'?'Nama kelompok yang dikomentari':'Komentar / masukan untuk kelompok ini';
+      const control=document.createElement(field==='group'?'input':'textarea');if(field==='group')control.type='text';
+      control.id=id;control.dataset.peerField=field;control.value=row[field];
+      control.placeholder=field==='group'?'Contoh: Kelompok 2 / Tim Melati':'Contoh: Bukti pengamatannya sudah jelas. Coba jelaskan asal tetesan pada tutup panci.';
+      control.addEventListener('input',()=>{persistPeerReviews44();document.getElementById('s44-peer-status').textContent='Perubahan nama kelompok dan komentar sudah tersimpan.'});
+      block.append(label,control);card.appendChild(block);
+    }
+    list.appendChild(card);
+  });
+  document.getElementById('s44-peer-reviews').value=JSON.stringify(rows);
+}
+function addPeerReview44(){
+  const rows=persistPeerReviews44();rows.push({group:'',comment:''});storePeerReviews44(rows);renderPeerReviews44();
+  const last=document.querySelector('#s44-peer-list .peer-review-card:last-child input');last.focus();last.scrollIntoView({block:'center',behavior:'smooth'});
+  document.getElementById('s44-peer-status').textContent='Kelompok baru ditambahkan. Isi nama kelompok yang ingin kamu komentari.';
+}
+function removePeerReview44(index){
+  const rows=persistPeerReviews44();if(rows.length<=1)return;rows.splice(index,1);storePeerReviews44(rows);renderPeerReviews44();
+  document.getElementById('s44-peer-status').textContent='Kartu komentar dihapus. Komentar lainnya tetap tersimpan.';
+}
+
 function validatePeer(n){return requireFields([`s${n}-peer-group`,`s${n}-peer-note`],'Tuliskan kelompok yang kamu beri masukan dan isi masukannya.')}
-function savePresentation44(){if(!validatePeer(44)||!requireFields(['s44-note'],'Isi catatan setelah presentasi.'))return;captureInputs(44);goLesson(45)}
+function savePresentation44(){
+  const rows=persistPeerReviews44();
+  if(!rows.length||rows.some(r=>!r.group.trim()||!r.comment.trim()))return toast('Lengkapi nama kelompok dan komentarnya pada setiap kartu.');
+  captureInputs(44);goLesson(45);
+}
 function saveToolsPlan(){if(!requireFields(['tools-equipment','tools-materials','tools-person'],'Lengkapi rencana alat, bahan, dan penanggung jawabnya.'))return;captureInputs(95);goLesson(53)}
 function populateToolsSummary(id){const el=document.getElementById(id);if(!el)return;el.textContent=['Alat: '+(data.inputs['tools-equipment']||'Belum diisi'),'Bahan: '+(data.inputs['tools-materials']||'Belum diisi'),'Penanggung jawab: '+(data.inputs['tools-person']||'Belum diisi')].join('\n')}
 function bindRevisionUI(){
@@ -1967,11 +2025,11 @@ function startMeeting3(){if(!data.progress.meeting2Done)return toast('🔒 Seles
 function startMeeting4(){if(!data.progress.meeting3Done)return toast('🔒 Selesaikan Pertemuan 3 terlebih dahulu.');goLesson(66)}
 function captureInputs(n){
   if(!n)return;const s=document.getElementById('screen-'+n);if(!s)return;
-  s.querySelectorAll('input,textarea,select').forEach(el=>{if(!el.id&&!el.name)return;const key=el.id||el.name;if(el.type==='checkbox')data.inputs[key]=el.checked;else if(el.type==='radio'){if(el.checked)data.inputs[key]=el.value}else data.inputs[key]=el.value});saveData();
+  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.closest('[data-peer-reviews]'))return;if(!el.id&&!el.name)return;const key=el.id||el.name;if(el.type==='checkbox')data.inputs[key]=el.checked;else if(el.type==='radio'){if(el.checked)data.inputs[key]=el.value}else data.inputs[key]=el.value});saveData();
 }
 function restoreScreen(n){
   const s=document.getElementById('screen-'+n);if(!s)return;
-  s.querySelectorAll('input,textarea,select').forEach(el=>{const key=el.id||el.name;if(!(key in data.inputs))return;if(el.type==='checkbox')el.checked=!!data.inputs[key];else if(el.type==='radio')el.checked=data.inputs[key]===el.value;else el.value=data.inputs[key]});
+  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.closest('[data-peer-reviews]'))return;const key=el.id||el.name;if(!(key in data.inputs))return;if(el.type==='checkbox')el.checked=!!data.inputs[key];else if(el.type==='radio')el.checked=data.inputs[key]===el.value;else el.value=data.inputs[key]});
 }
 function saveAndNext(id,next){const el=document.getElementById(id);if(!el||!String(el.value).trim())return toast('Lengkapi jawaban terlebih dahulu.');data.inputs[id]=el.value;saveData();goLesson(next)}
 function saveTargets(){
@@ -2050,7 +2108,7 @@ function updateMacroMicro(v){const micro=document.getElementById('micro-view'),m
 function checkModelMatch(){const sels=[...document.querySelectorAll('#model-match select')];if(sels.some(s=>!s.value))return toast('Lengkapi semua model.');const ok=sels.every(s=>s.value===s.dataset.answer);const fb=document.getElementById('model-feedback');fb.className='feedback show '+(ok?'ok':'bad');fb.textContent=ok?'✅ Semua model sudah tepat.':'💡 Coba periksa kembali susunan, jarak, dan gerak partikelnya.';document.getElementById('model-next').disabled=!ok;if(ok){data.scores.s13=1;saveData()}}
 function updateTemp(v){const label=document.getElementById('temp-text');label.textContent=v<45?'Suhu rendah':v<75?'Suhu sedang':'Suhu lebih tinggi';const parts=document.querySelectorAll('#temp-particles .particle');parts.forEach(p=>{p.style.animationDuration=v<45?'2.8s':v<75?'1.8s':'.9s'})}
 function runDiffusion(){clearTimeout(diffusionTimer);const t=document.getElementById('diffusion-tank');t.classList.remove('running');void t.offsetWidth;t.classList.add('running');document.getElementById('s15-next').disabled=true;document.getElementById('diffusion-status').textContent='Amati: tetesan turun, melebar, lalu memudar ke seluruh air.';diffusionTimer=setTimeout(()=>{document.getElementById('diffusion-status').textContent='Akhir: warna air lebih merata; tidak ada tetesan pekat yang tertinggal.';document.getElementById('s15-next').disabled=false;data.inputs.s15Run=true;saveData()},7600)}
-function initVisuals(n){if(n===9)buildParticles('micro-view','liquid',18);if(n===10)buildParticles('solid-particles','solid',20);if(n===11)buildParticles('liquid-particles','liquid',19);if(n===12)buildParticles('gas-particles','gas',10);if(n===13){renderParticleModel('model-a-preview','solid');renderParticleModel('model-b-preview','liquid');renderParticleModel('model-c-preview','gas')}if(n===14){buildParticles('temp-particles','liquid',18);updateTemp(document.getElementById('temp-range').value)}if(n===24){buildParticles('heat-particles','liquid',20);updateHeatLab(document.getElementById('heat-range').value)}if(n===34)renderSort();if(n===56)restorePattern();if(n===59)populateS59();if(n===64)buildBlueprint();if(n===65)updateFinalCheck();if(n===66)populateMeeting4Blueprint();if(n===70)populateMeeting4Pattern();if(n===76){buildParticles('m4-liquid-particles','liquid',18);buildParticles('m4-gas-particles','gas',12)}if(n===82)populateS82();if(n===87)populateS87();}
+function initVisuals(n){if(n===9)buildParticles('micro-view','liquid',18);if(n===10)buildParticles('solid-particles','solid',20);if(n===11)buildParticles('liquid-particles','liquid',19);if(n===12)buildParticles('gas-particles','gas',10);if(n===13){renderParticleModel('model-a-preview','solid');renderParticleModel('model-b-preview','liquid');renderParticleModel('model-c-preview','gas')}if(n===14){buildParticles('temp-particles','liquid',18);updateTemp(document.getElementById('temp-range').value)}if(n===24){buildParticles('heat-particles','liquid',20);updateHeatLab(document.getElementById('heat-range').value)}if(n===34)renderSort();if(n===44)renderPeerReviews44();if(n===56)restorePattern();if(n===59)populateS59();if(n===64)buildBlueprint();if(n===65)updateFinalCheck();if(n===66)populateMeeting4Blueprint();if(n===70)populateMeeting4Pattern();if(n===76){buildParticles('m4-liquid-particles','liquid',18);buildParticles('m4-gas-particles','gas',12)}if(n===82)populateS82();if(n===87)populateS87();}
 
 function markAnswer(name,correct,feedbackId,nextId,messageOk,messageBad){
   const c=document.querySelector(`input[name="${name}"]:checked`);if(!c)return toast('Pilih jawaban terlebih dahulu.');
