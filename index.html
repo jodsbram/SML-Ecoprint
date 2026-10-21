@@ -1546,6 +1546,9 @@ input[type=text],textarea,select{width:100%;border:1px solid #cfd8dc;background:
   <div class="photo-upload">
     <label for="s81-photo">📷 Ambil / Pilih Foto Hasil Totebag</label><input id="s81-photo" type="file" accept="image/*" onchange="previewM4Photo(this)">
     <img id="s81-preview" class="photo-preview" alt="Preview hasil totebag">
+    <style>#s81-photo-retry[hidden]{display:none!important}</style>
+    <p id="s81-photo-status" class="small" role="status" aria-live="polite">Pilih foto hasil totebag.</p>
+    <button id="s81-photo-retry" type="button" class="btn" hidden onclick="uploadM4Photo()">Kirim Ulang Foto</button>
   </div>
   <div class="form-group" style="margin-top:12px"><label>Kesan pertama terhadap hasil</label><textarea id="s81-note" placeholder="Apa yang langsung kamu amati dari warna dan motifnya?"></textarea></div>
   <button class="btn" onclick="saveScreen81()">Simpan Hasil →</button>
@@ -1934,7 +1937,7 @@ function loadData(){
   }catch(e){console.warn(e)}
 }
 function saveData(){
-  try{localStorage.setItem('smlEcoprint93',JSON.stringify(data));scheduleCloudSync()}catch(e){console.warn(e)}
+  try{localStorage.setItem('smlEcoprint93',JSON.stringify(data));scheduleCloudSync();return true}catch(e){console.warn(e);return false}
 }
 function getStudentId(){
   let id=localStorage.getItem('smlStudentId');
@@ -1945,10 +1948,23 @@ function scheduleCloudSync(){
   if(!data.student.nama||!data.student.kelas)return;
   clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(syncCloud,1000);
 }
+let cloudSyncBusy=false,cloudSyncAgain=false,lastCloudWarning=0;
 async function syncCloud(){
-  if(!navigator.onLine)return;
-  try{await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'sync',token:GAS_TOKEN,studentId:getStudentId(),student:data.student,inputs:data.inputs,progress:data.progress,currentLesson})})}catch(e){console.warn(e)}
+  if(!navigator.onLine||!data.student.nama||!data.student.kelas)return;
+  if(cloudSyncBusy){cloudSyncAgain=true;return}
+  cloudSyncBusy=true;
+  try{
+    do{
+      cloudSyncAgain=false;
+      await sendCloudConfirmed({action:'sync',studentId:getStudentId(),student:data.student,
+        inputs:data.inputs,progress:data.progress,scores:data.scores,currentLesson,currentScreen:currentLesson});
+    }while(cloudSyncAgain&&navigator.onLine);
+  }catch(error){
+    console.warn(error);
+    if(Date.now()-lastCloudWarning>60000){lastCloudWarning=Date.now();toast('Data belum terkonfirmasi di server. Jawaban tetap disimpan di perangkat; periksa koneksi dan deployment.')}
+  }finally{cloudSyncBusy=false}
 }
+
 function allScreens(){clearTimeout(diffusionTimer);document.querySelectorAll('video').forEach(v=>v.pause());stopAllGasSimulations();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'))}
 function updateChrome(){
   const header=document.getElementById('main-header'),wrap=document.getElementById('progress-wrap'),nav=document.getElementById('bottom-nav');
@@ -2025,11 +2041,11 @@ function startMeeting3(){if(!data.progress.meeting2Done)return toast('🔒 Seles
 function startMeeting4(){if(!data.progress.meeting3Done)return toast('🔒 Selesaikan Pertemuan 3 terlebih dahulu.');goLesson(66)}
 function captureInputs(n){
   if(!n)return;const s=document.getElementById('screen-'+n);if(!s)return;
-  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.closest('[data-peer-reviews]'))return;if(!el.id&&!el.name)return;const key=el.id||el.name;if(el.type==='checkbox')data.inputs[key]=el.checked;else if(el.type==='radio'){if(el.checked)data.inputs[key]=el.value}else data.inputs[key]=el.value});saveData();
+  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.type==='file'||el.closest('[data-peer-reviews]'))return;if(!el.id&&!el.name)return;const key=el.id||el.name;if(el.type==='checkbox')data.inputs[key]=el.checked;else if(el.type==='radio'){if(el.checked)data.inputs[key]=el.value}else data.inputs[key]=el.value});saveData();
 }
 function restoreScreen(n){
   const s=document.getElementById('screen-'+n);if(!s)return;
-  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.closest('[data-peer-reviews]'))return;const key=el.id||el.name;if(!(key in data.inputs))return;if(el.type==='checkbox')el.checked=!!data.inputs[key];else if(el.type==='radio')el.checked=data.inputs[key]===el.value;else el.value=data.inputs[key]});
+  s.querySelectorAll('input,textarea,select').forEach(el=>{if(el.type==='file'||el.closest('[data-peer-reviews]'))return;const key=el.id||el.name;if(!(key in data.inputs))return;if(el.type==='checkbox')el.checked=!!data.inputs[key];else if(el.type==='radio')el.checked=data.inputs[key]===el.value;else el.value=data.inputs[key]});
 }
 function saveAndNext(id,next){const el=document.getElementById(id);if(!el||!String(el.value).trim())return toast('Lengkapi jawaban terlebih dahulu.');data.inputs[id]=el.value;saveData();goLesson(next)}
 function saveTargets(){
@@ -2214,9 +2230,113 @@ function saveS74(){if(!document.getElementById('s74-teacher').checked)return toa
 function checkS75(){checkSimpleRadio('s75','b','s75-feedback','s75-next','✅ Benar. Cair → gas disebut menguap.','💡 Air cair yang menerima energi panas dapat berubah menjadi gas.')}
 function checkS77(){checkSimpleRadio('s77','b','s77-feedback','s77-next','✅ Tepat. Gas → cair disebut mengembun.','💡 Tetesan berasal dari uap air yang berubah kembali menjadi cair.')}
 function checkS79(){checkSimpleRadio('s79','b','s79-feedback','s79-next','✅ Tepat. Model partikel membantu menjelaskan perpindahan, tetapi proses ecoprint juga dipengaruhi kontak, panas, tekanan, dan interaksi bahan.','💡 Jangan menjelaskan perpindahan warna dengan satu faktor saja.')}
-let meeting4PhotoURL='';
-function previewM4Photo(input){const f=input.files&&input.files[0];if(!f)return;meeting4PhotoURL=URL.createObjectURL(f);const img=document.getElementById('s81-preview');img.src=meeting4PhotoURL;img.style.display='block';data.inputs['s81-photo-name']=f.name;saveData()}
-function saveScreen81(){if(!document.getElementById('s81-note').value.trim())return toast('Tuliskan kesan pertama terhadap hasil.');if(!document.getElementById('s81-photo').files.length&&!data.inputs['s81-photo-name'])return toast('Ambil atau pilih foto hasil totebag.');data.inputs['s81-note']=document.getElementById('s81-note').value;saveData();goLesson(82)}
+// Konfirmasi transaksi lintas origin; POST tetap memakai text/plain tanpa preflight.
+function cloudRequestId(){
+  if(window.crypto&&crypto.randomUUID)return 'r_'+crypto.randomUUID();
+  return 'r_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+}
+function readCloudReceipt(requestId){
+  return new Promise((resolve,reject)=>{
+    const callback='smlcb_'+cloudRequestId().replace(/-/g,'_');
+    const script=document.createElement('script');
+    let timer;
+    const clean=()=>{clearTimeout(timer);script.remove();delete window[callback]};
+    window[callback]=value=>{clean();resolve(value)};
+    script.onerror=()=>{clean();reject(new Error('Konfirmasi server tidak dapat dibaca. Periksa koneksi dan deployment Apps Script.'))};
+    timer=setTimeout(()=>{clean();reject(new Error('Konfirmasi server belum diterima. Coba lagi; foto tetap tersimpan di perangkat.'))},15000);
+    const params=new URLSearchParams({action:'requestStatus',token:GAS_TOKEN,requestId,callback,t:String(Date.now())});
+    script.src=GAS_URL+'?'+params.toString();document.head.appendChild(script);
+  });
+}
+async function sendCloudConfirmed(payload){
+  const requestId=cloudRequestId();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),35000);
+  try{
+    await fetch(GAS_URL,{method:'POST',mode:'no-cors',signal:controller.signal,
+      headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...payload,token:GAS_TOKEN,requestId})});
+  }finally{clearTimeout(timer)}
+  for(let attempt=0;attempt<10;attempt++){
+    const receipt=await readCloudReceipt(requestId);
+    if(!receipt.pending){if(!receipt.success)throw new Error(receipt.message||'Server gagal menyimpan data.');return receipt}
+    await new Promise(resolve=>setTimeout(resolve,2500));
+  }
+  throw new Error('Penyimpanan belum terkonfirmasi. Periksa koneksi, lalu coba kirim lagi.');
+}
+
+let meeting4PhotoURL='',photoPreparing=false,photoUploadTask=null;
+function updateM4PhotoUI(message){
+  const photo=data.m4Photo,preview=document.getElementById('s81-preview');
+  if(photo&&photo.dataUrl){preview.src=photo.dataUrl;preview.style.display='block'}
+  else{preview.removeAttribute('src');preview.style.display='none'}
+  const status=document.getElementById('s81-photo-status');
+  status.textContent=message||(photo?(photo.uploaded?'✅ Foto berhasil tersimpan di Drive dan tautannya di spreadsheet.':'⏳ Foto tersimpan di perangkat, belum terkonfirmasi di server.'):
+    (data.inputs['s81-photo-name']?'⚠️ Foto versi lama hanya tersimpan namanya. Pilih kembali foto untuk mengunggah.':'Pilih foto hasil totebag. Foto akan diperkecil sebelum dikirim.'));
+  document.getElementById('s81-photo-retry').hidden=!photo||photo.uploaded||!!photoUploadTask||photoPreparing;
+}
+async function compressM4Photo(file){
+  if(file.size>25000000)throw new Error('Ukuran foto terlalu besar. Pilih foto di bawah 25 MB.');
+  if(file.type&&!file.type.startsWith('image/'))throw new Error('Pilih file gambar.');
+  const image=new Image(),url=URL.createObjectURL(file);
+  try{
+    await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Format foto tidak terbaca. Pilih JPEG atau PNG.'));image.src=url});
+    const scale=Math.min(1,1280/Math.max(image.naturalWidth,image.naturalHeight));
+    const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
+    const result=canvas.toDataURL('image/jpeg',0.78);
+    if(result.length>2000000)throw new Error('Foto masih terlalu besar. Pilih foto berukuran lebih kecil.');
+    return result;
+  }finally{URL.revokeObjectURL(url)}
+}
+async function previewM4Photo(input){
+  const file=input.files&&input.files[0];if(!file)return;
+  if(photoPreparing||photoUploadTask){input.value='';return toast('Tunggu proses foto sebelumnya selesai.')}
+  photoPreparing=true;updateM4PhotoUI('⏳ Menyiapkan foto…');
+  const previous=data.m4Photo,oldName=data.inputs['s81-photo-name'];
+  try{
+    const dataUrl=await compressM4Photo(file);
+    data.m4Photo={dataUrl,fileName:file.name,uploadId:cloudRequestId(),uploaded:false};
+    data.inputs['s81-photo-name']=file.name;
+    if(!saveData()){
+      data.m4Photo=previous;
+      if(oldName===undefined)delete data.inputs['s81-photo-name'];else data.inputs['s81-photo-name']=oldName;
+      throw new Error('Penyimpanan perangkat penuh. Pilih foto yang lebih kecil.');
+    }
+    updateM4PhotoUI();
+  }catch(error){updateM4PhotoUI('⚠️ '+error.message);toast(error.message)}
+  finally{photoPreparing=false;input.value=''}
+  if(data.m4Photo&&data.m4Photo!==previous)uploadM4Photo();
+}
+async function uploadM4Photo(){
+  if(photoUploadTask)return photoUploadTask;
+  const photo=data.m4Photo;if(!photo||photo.uploaded)return;
+  if(!navigator.onLine){updateM4PhotoUI('⏳ Sedang offline. Foto akan dikirim saat koneksi kembali.');return}
+  if(!data.student.nama||!data.student.kelas){updateM4PhotoUI('⚠️ Lengkapi identitas sebelum mengirim foto.');return}
+  const task=(async()=>{
+    // Memberi kesempatan assignment photoUploadTask selesai sebelum memperbarui tombol.
+    await Promise.resolve();updateM4PhotoUI('⏳ Mengunggah foto dan menunggu konfirmasi server…');
+    try{
+      await sendCloudConfirmed({action:'uploadPhoto',studentId:getStudentId(),student:{...data.student},
+        storageKey:'s81-photo',uploadId:photo.uploadId,imageBase64:photo.dataUrl,mimeType:'image/jpeg',fileName:photo.fileName});
+      if(data.m4Photo===photo){photo.uploaded=true;saveData();updateM4PhotoUI()}
+    }catch(error){updateM4PhotoUI('⚠️ '+error.message+' Gunakan tombol Kirim Ulang Foto.');console.warn(error)}
+  })();
+  photoUploadTask=task;
+  try{await task}finally{
+    photoUploadTask=null;
+    document.getElementById('s81-photo-retry').hidden=!data.m4Photo||data.m4Photo.uploaded;
+  }
+}
+function saveScreen81(){
+  if(!document.getElementById('s81-note').value.trim())return toast('Tuliskan kesan pertama terhadap hasil.');
+  if(photoPreparing)return toast('Tunggu foto selesai disiapkan.');
+  if(!data.m4Photo||!data.m4Photo.dataUrl)return toast('Pilih kembali foto agar dapat diunggah ke Drive.');
+  data.inputs['s81-note']=document.getElementById('s81-note').value;saveData();
+  if(!data.m4Photo.uploaded){uploadM4Photo();toast('Catatan tersimpan. Foto tetap diproses; periksa statusnya di layar ini.')}
+  goLesson(82);
+}
+window.addEventListener('online',()=>{syncCloud();uploadM4Photo()});
+
 function populateS82(){const pat=(Array.isArray(data.inputs.s56Pattern)?data.inputs.s56Pattern:[]).filter(Boolean).join(' ');const el=document.getElementById('s82-blueprint');if(el)el.textContent=pat||selectedLeafNames().join(', ')||'-'}
 function saveRatingScreen(name,noteId,next){const r=document.querySelector(`input[name="${name}"]:checked`),note=document.getElementById(noteId);if(!r)return toast('Pilih skor 1–5.');if(!note.value.trim())return toast('Tuliskan alasan/catatan penilaian.');data.inputs[name]=r.value;data.inputs[noteId]=note.value;saveData();goLesson(next)}
 function populateS87(){const el=document.getElementById('s87-leaves');if(el)el.value=selectedLeafNames().join(', ')||'-'}
@@ -2237,7 +2357,7 @@ function openPopup(id){document.getElementById(id).classList.add('show')}
 function closePopup(id){document.getElementById(id).classList.remove('show')}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.opacity=1;setTimeout(()=>el.style.opacity=0,2100)}
 function resetAll(){if(!confirm('Hapus semua data dan progres?'))return;localStorage.removeItem('smlEcoprint93');location.reload()}
-document.addEventListener('DOMContentLoaded',()=>{bindRevisionUI();loadData();if(data.student.nama){document.getElementById('student-name').value=data.student.nama;document.getElementById('student-class').value=data.student.kelas;document.getElementById('student-group').value=data.student.kelompok}showAux('splash')});
+document.addEventListener('DOMContentLoaded',()=>{bindRevisionUI();loadData();delete data.inputs['s81-photo'];updateM4PhotoUI();if(data.m4Photo&&!data.m4Photo.uploaded)uploadM4Photo();if(data.student.nama){document.getElementById('student-name').value=data.student.nama;document.getElementById('student-class').value=data.student.kelas;document.getElementById('student-group').value=data.student.kelompok}showAux('splash')});
 </script>
 </body>
 </html>
